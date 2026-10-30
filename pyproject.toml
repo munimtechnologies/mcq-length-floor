@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcq-length-floor"
+version = "0.1.0"
+description = "How well does 'pick the longest option' do on a multiple-choice benchmark, slice by slice?"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [{name = "MV2, Munim, Inc.", email = "mv2@munimtech.com"}]
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+hf = ["pyarrow>=16"]
+
+[project.scripts]
+mcq-length-floor = "mcq_length_floor:main"
+
+[project.urls]
+Homepage = "https://github.com/munimtechnologies/mcq-length-floor"
+Audits = "https://github.com/munimtechnologies/munimtechnologies.github.io/tree/main/eval-reliability-audits"
+
+[tool.setuptools]
+py-modules = ["mcq_length_floor"]
