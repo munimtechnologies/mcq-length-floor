@@ -100,6 +100,14 @@ class TestCensus(unittest.TestCase):
         self.assertAlmostEqual(neg["lift"], -1 / 24, places=12)
         self.assertEqual(self.rep["ALL | stem=pos"]["pick_longest"], 1.0)
 
+    def test_markdown_escapes_polarity_separator(self):
+        md = m.markdown(self.rep, self.skipped)
+        self.assertIn("| ALL \\| stem=neg | 2 | 0.2917 | 0.2500 | 0.5000 | -0.0417 |", md)
+        rows = [ln for ln in md.splitlines() if ln.startswith("|")]
+        self.assertEqual(len(rows), 2 + len(self.rep))
+        for ln in rows:
+            self.assertEqual(ln.count("|") - ln.count("\\|"), 9, ln)
+
     def test_empty_report(self):
         self.assertEqual(m.report(m.new_acc()), {"n": 0})
 

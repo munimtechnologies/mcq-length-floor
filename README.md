@@ -12,7 +12,8 @@ catalogue found:
 
 - on MMLU-Pro, picking the longest option scores 18.38% against 11.09% chance (1.66x), more than MMLU's 1.12x;
 - on MMLU-Pro's STEM-website (`src` `stemez-`) biology and psychology questions it scores about 67%;
-- ten of 45 published model runs score below that heuristic on those 656 questions.
+- ten of 45 published model runs score below that heuristic on those 656 questions;
+- the shortcut survives translation: on MMLU-ProX it beats chance by about the same margin in all 29 languages.
 
 `mcq-length-floor` computes the floor for your own data in one command.
 
@@ -59,8 +60,27 @@ Input rules:
   Integers are tried first, then letters, then text.
 - **Polarity** (`--polarity`): a stem is "negative" when its last sentence contains not, except, false, incorrect,
   untrue, least or n't as a whole word. Only the last sentence is read, so a negation inside a case vignette does not
-  count. It is a simple rule, not a parser; check a sample on your data.
+  count. It is a simple rule, not a parser; check a sample on your data. Polarity slices are named
+  `<slice> | stem=neg` / `stem=pos`; in the markdown table the `|` is escaped so the columns stay aligned.
 - Skipped rows are counted by reason under the table.
+
+## Validated
+
+Before this release the tool was run in a sealed container (job `mcq-length-floor-validate-v1`, 30 October 2026,
+`python:3.12`, unit tests then the two commands above) and checked against the catalogue's independently computed
+numbers:
+
+| check | audit figure | tool output |
+| --- | --- | --- |
+| MMLU-Pro test, all 12,032 questions: pick-longest | 18.38% (audit 61) | 0.183768 |
+| MMLU-Pro test: chance (mean 1/k) | 11.09% (audit 61) | 0.110877 |
+| `src=stemez-Biology`, n 351: pick-longest | 0.6670736670736671 (audit 63) | 0.6670736670736671 |
+| `src=stemez-Psychology`, n 305: pick-longest | 0.6700858704137392 (audit 63) | 0.6700858704137392 |
+
+The per-source figures match to every printed digit. On the same run MedMCQA's validation split (4,183 questions,
+4 options) gave pick-longest 0.2999 against 0.25 chance (1.20x, z 7.6), with almost the same lift on the 754
+negatively worded stems (+0.0498) as on the other 3,429 (+0.0499). That run also exposed a table bug, since fixed:
+the polarity separator `|` split the slice cell in two. JSON output was not affected.
 
 ## How to read it
 

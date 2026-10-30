@@ -195,6 +195,11 @@ def read_hf(dataset, config, split, columns):
 
 # ----- output -----
 
+def _cell(s):
+    """A slice name as a markdown table cell: pipes (the polarity separator, or any in a group value) escaped."""
+    return str(s).replace("|", "\\|")
+
+
 def markdown(reports, skipped):
     head = ("| slice | n | chance | pick-longest | pick-shortest | lift | ratio | z |\n"
             "| --- | --- | --- | --- | --- | --- | --- | --- |")
@@ -202,7 +207,8 @@ def markdown(reports, skipped):
     for s, r in reports.items():
         z = "%.1f" % r["z"] if r.get("z") is not None else "-"
         lines.append("| %s | %d | %.4f | %.4f | %.4f | %+.4f | %.2f | %s |"
-                     % (s, r["n"], r["chance"], r["pick_longest"], r["pick_shortest"], r["lift"], r["ratio"], z))
+                     % (_cell(s), r["n"], r["chance"], r["pick_longest"], r["pick_shortest"], r["lift"], r["ratio"],
+                        z))
     if skipped:
         lines.append("")
         lines.append("Skipped: " + ", ".join("%s %d" % kv for kv in sorted(skipped.items())))
